@@ -1,20 +1,64 @@
 #include "maze.h"
+#include<windows.h>
 std::ostream & operator<<(std::ostream & os,const maze & arg){
     if(arg.map== nullptr)
         return os;
     else{
         for(auto i=0;i<=arg.row;++i) {
             for (int j = 0; j <= arg.col; ++j) {
-                std::cout<<arg.map[i][j];
+                os<<arg.map[i][j];
             }
-            std::cout<<std::endl;
+            os<<std::endl;
         }
     }
     return os;
 }
-
+std::fstream & operator<<(std::fstream & os, const maze & arg) {
+	if (arg.map == nullptr)
+		return os;
+	else {
+		for (auto i = 0; i <= arg.row; ++i) {
+			for (int j = 0; j <= arg.col; ++j) {
+				os << arg.map[i][j] ;
+			}
+			os << std::endl;
+		}
+	}
+	return os;
+}
+void maze::random() {
+	//seed = time(NULL);
+	//srand(unsigned(seed));
+	row = rand() % ROW_MAX + 10u;
+	col = rand() % COL_MAX + 10u;
+}
 maze::maze(){
+	random();
     initMap();
+}
+maze::maze(const maze &_arg):entry(_arg.entry),exitchar(_arg.exitchar),curchar(_arg.curchar),wall(_arg.wall)
+		,road(_arg.road),visited(_arg.visited){
+	if (this == &_arg)
+		return;
+	row = _arg.row;
+	col = _arg.col;
+	cur = _arg.cur;
+	exit = _arg.exit;
+	seed = _arg.seed;
+	 srand(unsigned(seed));
+	 initMap();
+}
+maze::maze(maze && _arg) :entry(_arg.entry), exitchar(_arg.exitchar), curchar(_arg.curchar), wall(_arg.wall)
+, road(_arg.road), visited(_arg.visited) {
+	if (this == &_arg)
+		return;
+	row = _arg.row;
+	col = _arg.col;
+	cur = _arg.cur;
+	exit = _arg.exit;
+	seed = _arg.seed;
+	map = _arg.map;
+	_arg.map = nullptr;
 }
 
 void maze::pushUnvisited(const std::pair<size_t , size_t > &arg) {
@@ -22,7 +66,15 @@ void maze::pushUnvisited(const std::pair<size_t , size_t > &arg) {
         visitmap.push(arg);
     }
 }
-
+void maze::clear() {
+	for (auto i = 0; i <= row; ++i)
+		delete[] map[i];
+	delete []map;
+}
+void maze::recover() {
+	srand((unsigned)seed);
+	initMap();
+}
 void maze::initExit() {
     cur.first=1,cur.second=1;
     map[cur.first][cur.second]=curchar;
@@ -30,10 +82,7 @@ void maze::initExit() {
     exit.second=col-1;
     map[exit.first][exit.second]=exitchar;
 }
-void maze::initMap() {     //初始化地图
-        srand((unsigned)time(nullptr));
-        row=rand()%ROW_MAX+10u;    //设置最小地图
-        col=rand()%COL_MAX+10u;
+void maze::initMap() {     
         map=new char*[row+1];
         for(int j=0;j<=row;j++)
             map[j]=new char[col+1];
@@ -54,7 +103,6 @@ void maze::initMap() {     //初始化地图
 void maze::visit(){
     while(map[cur.first][cur.second]!=exitchar){
         auto t_pair=cur;
-       // std::cout<<*this;
         if(map[t_pair.first][t_pair.second]!=entry)
             map[t_pair.first][t_pair.second]=visited;
         pushUnvisited(std::pair<size_t,size_t>(cur.first-1,cur.second));
@@ -75,4 +123,5 @@ void maze::visit(){
     std::cout<<*this;
     std::cout<<"success"<<std::endl;
 }
+
 
