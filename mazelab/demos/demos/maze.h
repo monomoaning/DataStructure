@@ -5,15 +5,17 @@
 #include<iostream>
 #include<fstream>
 #include"Stack.h"
-#define ROW_MAX 10         
-#define COL_MAX 10        
+#define ROW_MAX 30         
+#define COL_MAX 20        
 #define WALL_CHAR    'X'
 #define BLANK_CHAR   'O'
 #define THEOUT_CHAR  '#'
+#define CUR_CHAR     'c'
 class maze{
 public:
     friend  std::ostream &operator<<(std::ostream &,const maze &);
 	friend  std::fstream &operator<<(std::fstream &, const maze &);    //write to file by text
+	friend class manage;
     maze();
 	maze(const maze &);
 	maze(maze &&);
@@ -25,6 +27,8 @@ private:
     void initExit();
     void initMap();
     void pushUnvisited(const std::pair<size_t ,size_t >&);
+	void up();
+	void right();
     char **map;
     size_t row=0;
     size_t col=0;

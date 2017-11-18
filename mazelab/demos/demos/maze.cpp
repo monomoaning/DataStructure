@@ -29,8 +29,8 @@ std::fstream & operator<<(std::fstream & os, const maze & arg) {
 void maze::random() {
 	//seed = time(NULL);
 	//srand(unsigned(seed));
-	row = rand() % ROW_MAX + 10u;
-	col = rand() % COL_MAX + 10u;
+	row = rand() % ROW_MAX + 20u;
+	col = rand() % COL_MAX + 20u;
 }
 maze::maze(){
 	random();
@@ -65,6 +65,20 @@ void maze::pushUnvisited(const std::pair<size_t , size_t > &arg) {
     if(map[arg.first][arg.second]==exitchar||map[arg.first][arg.second]==road){
         visitmap.push(arg);
     }
+}
+void maze::up() {
+	if (map[cur.first][cur.second - 1] == exitchar || map[cur.first][cur.second - 1] == road) {
+		cur.second--;
+		map[cur.first][cur.second] = CUR_CHAR;
+		map[cur.first][cur.second + 1] = road;
+	}
+}
+void maze::right() {
+	if (map[cur.first + 1][cur.second] == exitchar || map[cur.first + 1][cur.second] == road) {
+		cur.first++;
+		map[cur.first][cur.second] = CUR_CHAR;
+		map[cur.first-1][cur.second] = road;
+	}
 }
 void maze::clear() {
 	for (auto i = 0; i <= row; ++i)

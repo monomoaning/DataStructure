@@ -110,7 +110,7 @@ namespace mono {
 				_size--;
 			}
 		}
-		value_type operator[](const uint32_t &_arg) {
+		value_type operator[](const uint32_t &_arg)const {
 			try {
 				if (_arg + 1 > _size)
 					throw std::runtime_error("overflow on list");
@@ -165,7 +165,6 @@ namespace mono {
 			head = tail = nullptr;
 			_size = 0;
 		}
-
 	private:
 		size_t _size=0;
 		node<value_type> *head=nullptr;
