@@ -18,6 +18,9 @@ public:
 	maze();
 	maze(const maze &);
 	maze(maze &&)noexcept;
+	maze & operator=(const maze & _arg);
+	maze &operator=(maze && _arg)noexcept;
+
 	int  getValue(int x, int y)const {
 		return map[x][y];
 	}
@@ -30,10 +33,18 @@ public:
 	void left();
 	~maze();
 private:
+	void release() {
+		if (map != nullptr) {
+			for (int i = 0; i < row; i++)
+				delete[] map[i];
+			delete[]map;
+		}
+	}
 	bool success() {
 		return curpos == exitpos;
 	}
 	void init();
+	size_t pos=0;
 	int **map;
 	int row;
 	int col;

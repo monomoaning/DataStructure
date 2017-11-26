@@ -36,34 +36,59 @@ void manage::draw(const maze& _arg) {
 	EndBatchDraw();
 	FlushBatchDraw();
 }
-
+void manage::changeScene() {
+	BinaryTree<int>a;
+	a.geneteRandom();
+	while (a.canStep()) {
+		auto p = a.step();
+		switch (p) {
+		case 2:
+			settextcolor(RED);
+			outtextxy(20, 20, _T("checkout scene"));
+			Sleep(100);
+			break;
+		case 1:
+			break;
+		case 0:
+			cur.curpos = cur.entrypos;
+			break;
+		case 3:
+			settextcolor(BLACK);
+			outtextxy(40, 20, _T("another action"));
+			Sleep(100);
+			break;
+		}
+	}
+}
 void manage::update() {
 	initgraph(GRAPH_ROW, GRAPH_COL);
 	setbkcolor(WHITE);
 	cleardevice();
 	while (1) {
-		draw(data.front());
+		draw(cur);
 		if (_kbhit()) {
 			char a = _getch();
 			switch (a) {
 			case 'w':
-				data.front().up();
+				cur.up();
 				setfillcolor(WHITE);
 				cleardevice();
 				break;
 			case 'a':
-				data.front().left();
+				cur.left();
 				cleardevice();
 				break;
 			case 'd':
-				data.front().right();
+				cur.right();
 				cleardevice();
 				break;
 			case 's':
-				data.front().down();
+				cur.down();
 				cleardevice();
 				break;
 			}
+			if (cur.pos >= 10)
+				changeScene();
 			if (data.front().success())
 				exit(1);
 		}

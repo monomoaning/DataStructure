@@ -65,6 +65,7 @@ void maze::up() {
 		map[curpos.first][curpos.second] = 0;
 		curpos.second--;
 		map[curpos.first][curpos.second] = 2;
+		pos++;
 	}
 }
 void maze::down() {
@@ -72,6 +73,7 @@ void maze::down() {
 		map[curpos.first][curpos.second] = 0;
 		curpos.second++;
 		map[curpos.first][curpos.second] = 2;
+		pos++;
 	}
 }
 void maze::right() {
@@ -79,6 +81,7 @@ void maze::right() {
 		map[curpos.first][curpos.second] = 0;
 		curpos.first++;
 		map[curpos.first][curpos.second] = 2;
+		pos++;
 	}
 }
 void maze::left() {
@@ -86,7 +89,38 @@ void maze::left() {
 		map[curpos.first][curpos.second] = 0;
 		curpos.first--;
 		map[curpos.first][curpos.second] = 2;
+		pos++;
 	}
+}
+maze & maze::operator=(const maze & _arg) {
+	if (this != &_arg) {
+		this->release();
+		curpos = _arg.curpos;
+		exitpos = _arg.exitpos;
+		entrypos = _arg.entrypos;
+		row = _arg.row;
+		col = _arg.col;
+		map = new int*[row];
+		for (int i = 0; i < row; i++)
+			map[i] = new int[col];
+		for (int i = 0; i < row; i++)
+			for (int j = 0; j < col; j++)
+				map[i][j] = _arg.getValue(i, j);
+	}
+	return *this;
+}
+maze & maze::operator=(maze && _arg)noexcept {
+	if (this != &_arg) {
+		this->release();
+		curpos = _arg.curpos;
+		exitpos = _arg.exitpos;
+		entrypos = _arg.entrypos;
+		row = _arg.row;
+		col = _arg.col;
+		map = _arg.map;
+		_arg.map = nullptr;
+	}
+	return *this;
 }
 /*the deconstruction*/
 maze ::~maze() {

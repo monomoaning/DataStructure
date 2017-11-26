@@ -1,6 +1,7 @@
 #pragma once
 #include<list>
 #include"maze.h"
+#include"BinaryTree.h"
 class manage {
 public:
 	/*default construction*/
@@ -19,6 +20,7 @@ public:
 	}
 	void update();
 private:
+	void changeScene();
 	/*draw on maze*/
 	void draw(const maze &);
 	/*copy add*/
@@ -27,6 +29,7 @@ private:
 		data.push_back(_arg);
 	}
 	/*data*/
+	maze cur;
 	std::list<maze>data;
 	size_t n = 0;
 };
