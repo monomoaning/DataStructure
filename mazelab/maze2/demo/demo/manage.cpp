@@ -1,35 +1,38 @@
 #include<graphics.h>
 #include<conio.h>
 #include"manage.h"
+#include<algorithm>
 /*genete the maze*/
+int manage::count = 0;
 void manage::genete(size_t n) {
+	data.reserve(20);
 	for (size_t i = 0; i < n; i++) {
-		maze a;
-		add(a);
+		maze * a=new maze;
+		data.push_back(a);
 	}
 }
 /*the draw function*/
 void manage::draw(const maze& _arg) {
 	BeginBatchDraw();
-	setfillcolor(BLACK);
-	setlinecolor(BLACK);
+	setfillcolor(YELLOW);
+	setlinecolor(WHITE);
 	for (int i = 0; i < _arg.row; i++)
-		line(i*(GRAPH_ROW / _arg.row), 0, i*(GRAPH_ROW / _arg.row), GRAPH_COL);
+		line(i*maze::form, 0, i*maze::form, _arg.col*maze::form);
 	for (int j = 0; j < _arg.col; j++)
-		line(0, j*(GRAPH_COL / _arg.col), GRAPH_ROW, j*(GRAPH_COL / _arg.col));
+		line(0, j*maze::form, _arg.row*maze::form, j*maze::form);
 	for (int i = 0; i < _arg.row; i++) {
 		for (int j = 0; j < _arg.col; j++) {
 			if (_arg.getValue(i,j) == 1) {
 				setfillcolor(BLACK);
-				fillrectangle(i*(GRAPH_ROW / _arg.row), j*(GRAPH_COL / _arg.col), (i + 1)*(GRAPH_ROW / _arg.row), (j + 1)*(GRAPH_COL / _arg.col));
+				fillrectangle(i*maze::form, j*maze::form, (i + 1)*maze::form, (j + 1)*maze::form);
 			}
 			if (_arg.getValue(i,j) == 2) {
 				setfillcolor(RED);
-				fillcircle((i*(GRAPH_ROW / _arg.row) + (i + 1)*(GRAPH_ROW / _arg.row)) / 2, (j*(GRAPH_COL / _arg.col) + (j + 1)*(GRAPH_COL / _arg.col)) / 2, (GRAPH_COL / _arg.col) / 2);
+				fillcircle((i*maze::form + (i + 1)*maze::form) / 2, (j*maze::form + (j + 1)*maze::form) / 2, maze::form / 2);
 			}
 			if (_arg.getValue(i,j) == 3) {
 				setfillcolor(GREEN);
-				fillrectangle(i*(GRAPH_ROW / _arg.row), j*(GRAPH_COL / _arg.col), (i + 1)*(GRAPH_ROW / _arg.row), (j + 1)*(GRAPH_COL / _arg.col));
+				fillrectangle(i*maze::form, j*maze::form, (i + 1)*maze::form, (j + 1)*maze::form);
 			}
 		}
 	}
@@ -61,10 +64,19 @@ void manage::changeScene() {
 	}
 }
 void manage::update() {
-	initgraph(GRAPH_ROW, GRAPH_COL);
+	std::sort(data.begin(), data.end(), MazeSort());
+	initgraph(cur.row*maze::form, cur.col*maze::form);
 	setbkcolor(WHITE);
 	cleardevice();
+	static int d = 0;
+	cur = *data[d];
 	while (1) {
+		//if (!cur.canMove()) {
+		//	cur.release();
+		//	cur.init();
+		//	continue;
+		//}
+		Resize(NULL, cur.row*maze::form, cur.col*maze::form);
 		draw(cur);
 		if (_kbhit()) {
 			char a = _getch();
@@ -86,11 +98,21 @@ void manage::update() {
 				cur.down();
 				cleardevice();
 				break;
+			case 'r':
+				cur = *data[++d];
+				cleardevice();
+				break;
+			case 'k':
+				if (count > 3)
+					break;
+				cur.writeToFile("maze.txt");
+				count++;
+				break;
 			}
-			if (cur.pos >= 10)
-				changeScene();
-			if (data.front().success())
-				exit(1);
+			/*if (cur.pos >= 10)
+				changeScene();*/
+			if (cur.success())
+				cur = *data[++d];
 		}
 	}
 }

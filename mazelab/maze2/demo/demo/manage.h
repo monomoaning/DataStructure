@@ -1,9 +1,11 @@
 #pragma once
 #include<list>
 #include"maze.h"
+#include<vector>
 #include"BinaryTree.h"
 class manage {
 public:
+	static int count;
 	/*default construction*/
 	manage() = default;
 	void genete(size_t);
@@ -16,9 +18,14 @@ public:
 		return data.size();
 	}
 	void output() {
-		draw(data.front());
+		draw(*data.front());
 	}
 	void update();
+	~manage() {
+		for (auto t : data)
+			if (t != nullptr)
+				delete t;
+	}
 private:
 	void changeScene();
 	/*draw on maze*/
@@ -30,6 +37,6 @@ private:
 	}
 	/*data*/
 	maze cur;
-	std::list<maze>data;
+	std::vector<maze*>data;
 	size_t n = 0;
 };
